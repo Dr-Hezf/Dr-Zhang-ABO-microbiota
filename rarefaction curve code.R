@@ -1,27 +1,27 @@
 rm(list = ls())
 getwd()
 setwd("C:/Users/hejia/Desktop")
-#°²×°¡¢¼ÓÔØ±ØĞëµÄR°ü
+
 install.packages("doBy")
 install.packages("vegan")
 install.packages("ggplot2")
 install.packages("ggalt")
 install.packages("ragg")
-library(vegan)   #ÓÃÓÚ¼ÆËãshannon¡¢simpson¡¢chao1¡¢ACEÖ¸ÊıµÈ
-library(ggplot2)  #ÓÃÓÚ×÷Í¼
-library(doBy)  #ÓÃÓÚ·Ö×éÍ³¼Æ
-library(ggalt)  #ÓÃÓÚ»æÖÆÄâºÏÇúÏß
+library(vegan)   #ç”¨äºè®¡ç®—shannonã€simpsonã€chao1ã€ACEæŒ‡æ•°ç­‰
+library(ggplot2)  #ç”¨äºä½œå›¾
+library(doBy)  #ç”¨äºåˆ†ç»„ç»Ÿè®¡
+library(ggalt)  #ç”¨äºç»˜åˆ¶æ‹Ÿåˆæ›²çº¿
 library(ragg)
 
-##¶¨Òåº¯Êı
-#¼ÆËã¶àÖÖAlpha¶àÑùĞÔÖ¸Êı¡¢½á¹û·µ»ØÖÁÏòÁ¿
+##å®šä¹‰å‡½æ•°
+#è®¡ç®—å¤šç§Alphaå¤šæ ·æ€§æŒ‡æ•°ã€ç»“æœè¿”å›è‡³å‘é‡
 alpha_index <- function(x, method = 'richness', tree = NULL, base = exp(1)) {
-  if (method == 'richness') result <- rowSums(x > 0)    #·á¸»¶ÈÖ¸Êı
-  else if (method == 'chao1') result <- estimateR(x)[2, ]    #Chao1 Ö¸Êı
-  else if (method == 'ace') result <- estimateR(x)[4, ]    #ACE Ö¸Êı
-  else if (method == 'shannon') result <- diversity(x, index = 'shannon', base = base)    #Shannon Ö¸Êı
-  else if (method == 'simpson') result <- diversity(x, index = 'simpson')    #Gini-Simpson Ö¸Êı
-  else if (method == 'pielou') result <- diversity(x, index = 'shannon', base = base) / log(estimateR(x)[1, ], base)    #Pielou ¾ùÔÈ¶È
+  if (method == 'richness') result <- rowSums(x > 0)    #ä¸°å¯Œåº¦æŒ‡æ•°
+  else if (method == 'chao1') result <- estimateR(x)[2, ]    #Chao1 æŒ‡æ•°
+  else if (method == 'ace') result <- estimateR(x)[4, ]    #ACE æŒ‡æ•°
+  else if (method == 'shannon') result <- diversity(x, index = 'shannon', base = base)    #Shannon æŒ‡æ•°
+  else if (method == 'simpson') result <- diversity(x, index = 'simpson')    #Gini-Simpson æŒ‡æ•°
+  else if (method == 'pielou') result <- diversity(x, index = 'shannon', base = base) / log(estimateR(x)[1, ], base)    #Pielou å‡åŒ€åº¦
   else if (method == 'gc') result <- 1 - rowSums(x == 1) / rowSums(x)    #goods_coverage
   else if (method == 'pd' & !is.null(tree)) {    #PD_whole_tree
     pd <- pd(x, tree, include.root = FALSE)
@@ -31,7 +31,7 @@ alpha_index <- function(x, method = 'richness', tree = NULL, base = exp(1)) {
   result
 }
 
-#¸ù¾İ³éÑù²½³¤£¨step£©£¬Í³¼ÆÃ¿¸öÏ¡ÊÍÌİ¶ÈÏÂµÄ Alpha ¶àÑùĞÔÖ¸Êı£¬½á¹û·µ»ØÖÁÁĞ±í
+#æ ¹æ®æŠ½æ ·æ­¥é•¿ï¼ˆstepï¼‰ï¼Œç»Ÿè®¡æ¯ä¸ªç¨€é‡Šæ¢¯åº¦ä¸‹çš„ Alpha å¤šæ ·æ€§æŒ‡æ•°ï¼Œç»“æœè¿”å›è‡³åˆ—è¡¨
 alpha_curves <- function(x, step, method = 'richness', rare = NULL, tree = NULL, base = exp(1)) {
   x_nrow <- nrow(x)
   if (is.null(rare)) rare <- rowSums(x) else rare <- rep(rare, x_nrow)
@@ -52,15 +52,15 @@ alpha_curves <- function(x, step, method = 'richness', rare = NULL, tree = NULL,
 }
 
 
-#µ¼ÈëÊı¾İ
-otu<-read.csv("ÕÅ-otu-ÖÊ¿ØÍ¼.csv",header = T,row.names = 1,stringsAsFactors = F,check.names = F)   #¶ÁÈ¡OTUÔ­Ê¼ÎÄ¼ş
+#å¯¼å…¥æ•°æ®
+otu<-read.csv("å¼ -otu-è´¨æ§å›¾.csv",header = T,row.names = 1,stringsAsFactors = F,check.names = F)   #è¯»å–OTUåŸå§‹æ–‡ä»¶
 
 
-##chao1Ö¸Êı
-#ÒÔ2000µÄ²½³¤¼ÆËãchao1
-chao1_curves <- alpha_curves(otu,step = 2000,method = 'chao1') #²½³¤¸ù¾İĞèÒªµ÷Õû
+##chao1æŒ‡æ•°
+#ä»¥2000çš„æ­¥é•¿è®¡ç®—chao1
+chao1_curves <- alpha_curves(otu,step = 2000,method = 'chao1') #æ­¥é•¿æ ¹æ®éœ€è¦è°ƒæ•´
 
-#»ñµÃ ggplot2 ×÷Í¼ÎÄ¼ş
+#è·å¾— ggplot2 ä½œå›¾æ–‡ä»¶
 plot_chao1 <- data.frame()
 for (i in names(chao1_curves)) {
   chao1_curves_i <- (chao1_curves[[i]])
@@ -72,27 +72,27 @@ rownames(plot_chao1) <- NULL
 plot_chao1$rare <- as.numeric(plot_chao1$rare)
 plot_chao1$alpha <- as.numeric(plot_chao1$alpha)
 
-#ggplot2 ×÷Í¼
+#ggplot2 ä½œå›¾
 yt_chao1 <- ggplot(plot_chao1, aes(rare, alpha, color = sample)) +
   geom_line() +
   labs(x = 'Number of sequences', y = 'chao1', color = NULL) +
   theme(panel.grid = element_blank(), panel.background = element_rect(fill = 'transparent', color = 'black'), legend.key = element_rect(fill = 'transparent')) +
-  theme(axis.title = element_text(size = 150),axis.text = element_text(size=100,angle=0)) +              #axis.textµ÷½Ú¿Ì¶È±êÇ©´óĞ¡£»axis.titleµ÷ÕûÖá±êÌâ×ÖÌå
+  theme(axis.title = element_text(size = 150),axis.text = element_text(size=100,angle=0)) +              #axis.textè°ƒèŠ‚åˆ»åº¦æ ‡ç­¾å¤§å°ï¼›axis.titleè°ƒæ•´è½´æ ‡é¢˜å­—ä½“
   geom_vline(xintercept = min(rowSums(otu)), linetype = 2) +
   scale_x_continuous(breaks = seq(0, 40000, 5000), labels = as.character(seq(0, 40000, 5000)))
 
-yt_chao1   #ÕâÒ»²½ÊÇÎªÁËÁË½âµçÄÔÒÑ¾­Íê³ÉÈÎÎñ
+yt_chao1   #è¿™ä¸€æ­¥æ˜¯ä¸ºäº†äº†è§£ç”µè„‘å·²ç»å®Œæˆä»»åŠ¡
 
-ggsave("yt_chao1-4.pdf",yt_chao1,width = 200,dpi = 30,height = 200,units = "cm",limitsize = FALSE)     #µ±Ñù±¾Á¿ºÜ´ó£¬µ¥Î»ĞèÒª¸Ä³Écm£¬´óĞ¡Òª×ã¹»´ó£¬²ÅÄÜ¹»ÏÔÊ¾È«Í¼
-
-
+ggsave("yt_chao1-4.pdf",yt_chao1,width = 200,dpi = 30,height = 200,units = "cm",limitsize = FALSE)     #å½“æ ·æœ¬é‡å¾ˆå¤§ï¼Œå•ä½éœ€è¦æ”¹æˆcmï¼Œå¤§å°è¦è¶³å¤Ÿå¤§ï¼Œæ‰èƒ½å¤Ÿæ˜¾ç¤ºå…¨å›¾
 
 
-##richnessÖ¸Êı
-#ÒÔ2000µÄ²½³¤¼ÆËãrichnessÖ¸Êı
-richness_curves <- alpha_curves(otu,step = 2000,method = 'richness') #²½³¤¸ù¾İĞèÒªµ÷Õû
 
-#»ñµÃ ggplot2 ×÷Í¼ÎÄ¼ş
+
+##richnessæŒ‡æ•°
+#ä»¥2000çš„æ­¥é•¿è®¡ç®—richnessæŒ‡æ•°
+richness_curves <- alpha_curves(otu,step = 2000,method = 'richness') #æ­¥é•¿æ ¹æ®éœ€è¦è°ƒæ•´
+
+#è·å¾— ggplot2 ä½œå›¾æ–‡ä»¶
 plot_richness <- data.frame()
 for (i in names(richness_curves)) {
   richness_curves_i <- (richness_curves[[i]])
@@ -104,26 +104,26 @@ rownames(plot_richness) <- NULL
 plot_richness$rare <- as.numeric(plot_richness$rare)
 plot_richness$alpha <- as.numeric(plot_richness$alpha)
 
-#ggplot2 ×÷Í¼
+#ggplot2 ä½œå›¾
 yt_richness <- ggplot(plot_richness, aes(rare, alpha, color = sample)) +
   geom_line() +
   labs(x = 'Number of sequences', y = 'richness', color = NULL) +
   theme(panel.grid = element_blank(), panel.background = element_rect(fill = 'transparent', color = 'black'), legend.key = element_rect(fill = 'transparent')) +
-  theme(axis.title = element_text(size = 150),axis.text = element_text(size=100,angle=0)) +              #axis.textµ÷½Ú¿Ì¶È±êÇ©´óĞ¡£»axis.titleµ÷ÕûÖá±êÌâ×ÖÌå
+  theme(axis.title = element_text(size = 150),axis.text = element_text(size=100,angle=0)) +              #axis.textè°ƒèŠ‚åˆ»åº¦æ ‡ç­¾å¤§å°ï¼›axis.titleè°ƒæ•´è½´æ ‡é¢˜å­—ä½“
   geom_vline(xintercept = min(rowSums(otu)), linetype = 2) +
   scale_x_continuous(breaks = seq(0, 40000, 5000), labels = as.character(seq(0, 40000, 5000)))
 
-yt_richness   #ÕâÒ»²½ÊÇÎªÁËÁË½âµçÄÔÒÑ¾­Íê³ÉÈÎÎñ
+yt_richness   #è¿™ä¸€æ­¥æ˜¯ä¸ºäº†äº†è§£ç”µè„‘å·²ç»å®Œæˆä»»åŠ¡
 
-ggsave("yt_richness.pdf",yt_richness,width = 200,dpi = 30,height = 200,units = "cm",limitsize = FALSE)     #µ±Ñù±¾Á¿ºÜ´ó£¬µ¥Î»ĞèÒª¸Ä³Écm£¬´óĞ¡Òª×ã¹»´ó£¬²ÅÄÜ¹»ÏÔÊ¾È«Í¼
+ggsave("yt_richness.pdf",yt_richness,width = 200,dpi = 30,height = 200,units = "cm",limitsize = FALSE)     #å½“æ ·æœ¬é‡å¾ˆå¤§ï¼Œå•ä½éœ€è¦æ”¹æˆcmï¼Œå¤§å°è¦è¶³å¤Ÿå¤§ï¼Œæ‰èƒ½å¤Ÿæ˜¾ç¤ºå…¨å›¾
 
 
 
 ##shannon
-#ÒÔ2000µÄ²½³¤¼ÆËãshannon
-shannon_curves <- alpha_curves(otu,step = 2000,method = 'shannon') #²½³¤¸ù¾İĞèÒªµ÷Õû
+#ä»¥2000çš„æ­¥é•¿è®¡ç®—shannon
+shannon_curves <- alpha_curves(otu,step = 2000,method = 'shannon') #æ­¥é•¿æ ¹æ®éœ€è¦è°ƒæ•´
 
-#»ñµÃ ggplot2 ×÷Í¼ÎÄ¼ş
+#è·å¾— ggplot2 ä½œå›¾æ–‡ä»¶
 plot_shannon <- data.frame()
 for (i in names(shannon_curves)) {
   shannon_curves_i <- (shannon_curves[[i]])
@@ -135,16 +135,16 @@ rownames(plot_shannon) <- NULL
 plot_shannon$rare <- as.numeric(plot_shannon$rare)
 plot_shannon$alpha <- as.numeric(plot_shannon$alpha)
 
-#ggplot2 ×÷Í¼
+#ggplot2 ä½œå›¾
 yt_shannon <- ggplot(plot_shannon, aes(rare, alpha, color = sample)) +
   geom_line() +
   labs(x = 'Number of sequences', y = 'shannon', color = NULL) +
   theme(panel.grid = element_blank(), panel.background = element_rect(fill = 'transparent', color = 'black'), legend.key = element_rect(fill = 'transparent')) +
-  theme(axis.title = element_text(size = 150),axis.text = element_text(size=100,angle=0)) +              #axis.textµ÷½Ú¿Ì¶È±êÇ©´óĞ¡£»axis.titleµ÷ÕûÖá±êÌâ×ÖÌå
+  theme(axis.title = element_text(size = 150),axis.text = element_text(size=100,angle=0)) +              #axis.textè°ƒèŠ‚åˆ»åº¦æ ‡ç­¾å¤§å°ï¼›axis.titleè°ƒæ•´è½´æ ‡é¢˜å­—ä½“
   geom_vline(xintercept = min(rowSums(otu)), linetype = 2) +
   scale_x_continuous(breaks = seq(0, 40000, 5000), labels = as.character(seq(0, 40000, 5000)))
 
-yt_shannon   #ÕâÒ»²½ÊÇÎªÁËÁË½âµçÄÔÒÑ¾­Íê³ÉÈÎÎñ
+yt_shannon   #è¿™ä¸€æ­¥æ˜¯ä¸ºäº†äº†è§£ç”µè„‘å·²ç»å®Œæˆä»»åŠ¡
 
-ggsave("yt_shannon.pdf",yt_shannon,width = 200,dpi = 30,height = 200,units = "cm",limitsize = FALSE)     #µ±Ñù±¾Á¿ºÜ´ó£¬µ¥Î»ĞèÒª¸Ä³Écm£¬´óĞ¡Òª×ã¹»´ó£¬²ÅÄÜ¹»ÏÔÊ¾È«Í¼
+ggsave("yt_shannon.pdf",yt_shannon,width = 200,dpi = 30,height = 200,units = "cm",limitsize = FALSE)     #å½“æ ·æœ¬é‡å¾ˆå¤§ï¼Œå•ä½éœ€è¦æ”¹æˆcmï¼Œå¤§å°è¦è¶³å¤Ÿå¤§ï¼Œæ‰èƒ½å¤Ÿæ˜¾ç¤ºå…¨å›¾
 
